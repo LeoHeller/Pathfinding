@@ -4,7 +4,6 @@ from Algos import *
 class Viz:
     def __init__(self):
         self.grid = Grid(300, 300, 50, AStarNode)
-        self.a_star = AStar(self.grid)
 
         self.clock = pygame.time.Clock()
         self.running = True
@@ -24,6 +23,12 @@ class Viz:
                     self.grid.draw_grid()
                 elif event.key == ord("s"):
                     self.special_mode = not self.special_mode
+                elif event.key == ord(" "):
+                    self.a_star = AStar(self.grid)
+                    path = self.a_star.get_path()
+
+                    for node in path:
+                        self.grid.draw_sq(node.x, node.y, color=(240, 22, 185))
 
     def place_obstacle(self, x, y):
         self.grid.draw_sq(x, y, color=(35, 0, 55))
