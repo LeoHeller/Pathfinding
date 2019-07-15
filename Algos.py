@@ -3,6 +3,13 @@ from pygame.locals import DOUBLEBUF
 import numpy as np
 from enum import Enum
 from typing import List, Optional
+import time
+import heapq
+import random
+from timeit import default_timer as timer
+from mazelib import Maze as _Maze
+from mazelib.generate.Prims import Prims
+import matplotlib.pyplot as plt
 
 
 class Modes(Enum):
@@ -21,21 +28,26 @@ class Node:
 
         self.penalty = 1
 
+        self.visited_for_maze_generation = False
+
     def set_mode(self, mode):
         self.mode = mode
 
 
 class Grid:
-    def __init__(self, width, height, node_size, node_type):
+    def __init__(self, width, height, node_size, node_type: Node, generate_maze=True):
         self.width = width
         self.height = height
         self.node_size = node_size
         self.node_type = node_type
 
+        self.generate_maze = generate_maze
+
         self.start_node_pos = (0, 0)
         self.end_node_pos = (0, 0)
 
-        self.nodes = np.empty([width, height], dtype=node_type)
+        self.nodes: Optional[node_type] = np.empty([int(width / self.node_size), int(height / self.node_size)],
+                                                   dtype=node_type)
 
         # pygame stuff
         pygame.init()
@@ -47,18 +59,82 @@ class Grid:
 
     def draw_grid(self):
         # draw the squares
-        for x in range(int(self.width / self.node_size) + 1):
-            for y in range(int(self.width / self.node_size) + 1):
+        for x in range(int(self.width / self.node_size)):
+            for y in range(int(self.width / self.node_size)):
                 self.draw_sq(x, y)
-                self.nodes[x][y] = (self.node_type(x, y))
+                self.nodes[x, y] = self.node_type(x, y)
 
         # reset the start position
         self.start_node_pos = (0, 0)
+        if self.generate_maze:
+            Maze(self)
 
     def draw_sq(self, x, y, color=(255, 255, 255), spacing=2):
         rect = pygame.Rect(x * self.node_size + spacing, y * self.node_size + spacing, self.node_size - spacing,
                            self.node_size - spacing)
         pygame.draw.rect(self.window, color, rect)
+
+    def place_obstacle(self, x, y):
+        self.draw_sq(x, y, color=(35, 0, 55))
+        self.nodes[x, y].set_mode(Modes.obstacle)
+
+    def place_walkable(self, x, y):
+        self.draw_sq(x, y, color=(255, 255, 255))
+        self.nodes[x, y].set_mode(Modes.walkable)
+
+    def place_start(self, x, y):
+        if self.nodes[self.start_node_pos].mode == Modes.start:
+            self.nodes[self.start_node_pos].set_mode(Modes.walkable)
+            self.draw_sq(self.start_node_pos[0], self.start_node_pos[1], color=(255, 255, 255))
+
+        self.start_node_pos = (x, y)
+        self.draw_sq(x, y, color=(65, 245, 70))
+        self.nodes[x, y].set_mode(Modes.start)
+
+    def place_end(self, x, y):
+        if self.nodes[self.end_node_pos].mode == Modes.end:
+            self.nodes[self.end_node_pos].set_mode(Modes.walkable)
+            self.draw_sq(self.end_node_pos[0], self.end_node_pos[1], color=(255, 255, 255))
+
+        self.end_node_pos = (x, y)
+        self.draw_sq(x, y, color=(14, 14, 153))
+        self.nodes[x, y].set_mode(Modes.end)
+
+
+class Maze:
+    def __init__(self, grid: Grid, start=(0, 0), rndm=True):
+        self.start = start
+        self.grid = grid
+
+        if not rndm:
+            random.seed(30)
+        self.maze = self.generate(10, 10)
+        w, h = pygame.display.get_surface().get_size()
+        visible_space = w // self.grid.node_size, h // self.grid.node_size
+        for x in range(int(self.grid.width / self.grid.node_size)):
+            for y in range(int(self.grid.height / self.grid.node_size)):
+                if not (0 < x < visible_space[0]) or not (0 < y < visible_space[1]):
+                    self.grid.place_obstacle(x, y)
+                    continue
+                if self.maze.grid[x, y] == 1:
+                    self.grid.place_obstacle(x, y)
+
+        grid.place_start(*self.maze.start)
+        grid.place_end(*self.maze.end)
+
+    def generate(self, width, height):
+        m = _Maze()
+        m.generator = Prims(width, height)
+        m.generate()
+        m.generate_entrances(True, True)
+        return m
+
+    # def showPNG(self, grid):
+    #     """Generate a simple image of the maze."""
+    #     plt.figure(figsize=(10, 5))
+    #     plt.imshow(grid, cmap=plt.cm.binary, interpolation='nearest')
+    #     plt.xticks([]), plt.yticks([])
+    #     plt.show()
 
 
 class AStarNode(Node):
@@ -66,19 +142,29 @@ class AStarNode(Node):
         super().__init__(x, y)
         self.g_cost = 0
         self.h_cost = 0
-        self.f_cost = 0
+        self.f_cost = float("inf")
 
         self.parent: Optional[AStarNode] = None
 
-    def __lt__(self, other):
+    def __lt__(self, other):  # self < other
+        if self.f_cost == other.f_cost:
+            return self.h_cost > other.h_cost
         return self.f_cost < other.f_cost
 
-    def __gt__(self, other):
+    def __gt__(self, other):  # self > other
+        if self.f_cost == other.f_cost:
+            return self.h_cost < other.h_cost
         return self.f_cost > other.f_cost
+
+    def __eq__(self, other):  # self == other
+        return self.x == other.x and self.y == other.y
 
 
 class AStar:
-    def __init__(self, grid):
+    def __init__(self, grid, h=None, neighbors=None):
+        self.h = self.manhattan_distance if h is None else h
+        self.neighbors = self.neighbors if h is None else neighbors
+
         self.grid: Grid = grid
         self.open: List[AStarNode] = list()
         self.closed: List[AStarNode] = list()
@@ -90,6 +176,8 @@ class AStar:
         path = None
         while path is None:
             path = self.next_step()
+            time.sleep(.01)
+            pygame.display.flip()
         return path
 
     @staticmethod
@@ -97,14 +185,10 @@ class AStar:
         distance = abs(node1.x - node2.x) + abs(node1.y - node2.y)
         return distance
 
-    def recalculate_node(self, node):
-        g_cost = AStar.manhattan_distance(node, self.start)
-        h_cost = AStar.manhattan_distance(node, self.end)
-        f_cost = (g_cost + h_cost) * node.penalty
-
-        node.g_cost = g_cost
-        node.h_cost = h_cost
-        node.f_cost = f_cost
+    @staticmethod
+    def diagonal_distance(node1, node2):
+        # c2 = a2 + b2
+        return (node2.x - node1.x) ** 2 + (node2.y - node1.x) ** 2
 
     @staticmethod
     def neighbors_with_diagonal(node):
@@ -119,7 +203,7 @@ class AStar:
         yield x + 1, y + 1
 
     @staticmethod
-    def neighbors(node):
+    def cardinal_neighbors(node):
         x, y = node.x, node.y
         yield x, y - 1
         yield x - 1, y
@@ -132,14 +216,16 @@ class AStar:
         return [i for i in a if i == a_min]
 
     def next_step(self):
-        current = self.open[0]
-        min_f_costs = AStar.all_min(self.open)
-        for node in min_f_costs:
-            if node.h_cost < current.h_cost:
-                current = node
+        try:
+            current = heapq.heappop(self.open)
+        except IndexError:
+            print("No path found")
+            return False
 
-        self.open.remove(current)
         self.closed.append(current)
+
+        # mark as closed
+        self.grid.draw_sq(current.x, current.y, color=(176, 16, 21))
 
         if current == self.end:
             # backtrack to start
@@ -151,7 +237,7 @@ class AStar:
 
         children: List[AStarNode] = list()
 
-        for neighbor in AStar.neighbors(current):
+        for neighbor in self.neighbors(current):
             try:
                 if self.grid.nodes[neighbor] is not None:
                     children.append(self.grid.nodes[neighbor])
@@ -163,8 +249,6 @@ class AStar:
             if child in self.closed or child.mode == Modes.obstacle:
                 continue
 
-            if child.mode == Modes.obstacle:
-                print("uhhhh")
             new_path_cost = current.g_cost + 1
             if (new_path_cost < child.g_cost) or child not in self.open:
                 # calculate g, h, f costs
@@ -174,4 +258,6 @@ class AStar:
                 child.parent = current
 
                 if child not in self.open:
-                    self.open.append(child)
+                    # mark as open
+                    self.grid.draw_sq(child.x, child.y, color=(158, 19, 156))
+                    heapq.heappush(self.open, child)
