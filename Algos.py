@@ -102,18 +102,19 @@ class Grid:
 
 
 class Maze:
-    def __init__(self, grid: Grid, start=(0, 0), rndm=True):
+    def __init__(self, grid: Grid, start=(0, 0)):
         self.start = start
         self.grid = grid
 
-        if not rndm:
-            random.seed(30)
         self.maze = self.generate(10, 10)
+
         w, h = pygame.display.get_surface().get_size()
+
         visible_space = w // self.grid.node_size, h // self.grid.node_size
+
         for x in range(int(self.grid.width / self.grid.node_size)):
             for y in range(int(self.grid.height / self.grid.node_size)):
-                if not (0 < x < visible_space[0]) or not (0 < y < visible_space[1]):
+                if not (0 <= x <= visible_space[0]) or not (0 <= y <= visible_space[1]):
                     self.grid.place_obstacle(x, y)
                     continue
                 if self.maze.grid[x, y] == 1:
@@ -122,19 +123,13 @@ class Maze:
         grid.place_start(*self.maze.start)
         grid.place_end(*self.maze.end)
 
-    def generate(self, width, height):
+    @staticmethod
+    def generate(width, height):
         m = _Maze()
         m.generator = Prims(width, height)
         m.generate()
         m.generate_entrances(True, True)
         return m
-
-    # def showPNG(self, grid):
-    #     """Generate a simple image of the maze."""
-    #     plt.figure(figsize=(10, 5))
-    #     plt.imshow(grid, cmap=plt.cm.binary, interpolation='nearest')
-    #     plt.xticks([]), plt.yticks([])
-    #     plt.show()
 
 
 class AStarNode(Node):
@@ -176,7 +171,7 @@ class AStar:
         path = None
         while path is None:
             path = self.next_step()
-            time.sleep(.01)
+            time.sleep(.005)
             pygame.display.flip()
         return path
 
@@ -239,7 +234,9 @@ class AStar:
 
         for neighbor in self.neighbors(current):
             try:
-                if self.grid.nodes[neighbor] is not None:
+                visible_space = self.grid.width // self.grid.node_size, self.grid.height // self.grid.node_size
+                if self.grid.nodes[neighbor] is not None and (
+                        (0 <= neighbor[0] <= visible_space[0]) and (0 <= neighbor[1] <= visible_space[1])):
                     children.append(self.grid.nodes[neighbor])
             except IndexError:
                 pass

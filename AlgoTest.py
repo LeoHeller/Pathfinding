@@ -3,7 +3,7 @@ from Algos import *
 
 class Viz:
     def __init__(self):
-        self.grid = Grid(525, 525, 25, AStarNode, False)
+        self.grid = Grid(525, 525, 25, AStarNode)
 
         pygame.display.flip()
         self.clock = pygame.time.Clock()
@@ -30,7 +30,9 @@ class Viz:
                 elif event.key == ord(" "):
                     self.a_star = AStar(self.grid, AStar.manhattan_distance, AStar.cardinal_neighbors)
                     path = self.a_star.get_path()
-
+                    if path is False:
+                        print("i cant solve that!!")
+                        return
                     for node in path:
                         self.grid.draw_sq(node.x, node.y, color=(19, 151, 158))
 
@@ -45,7 +47,7 @@ class Viz:
                 self.grid.place_obstacle(x, y)
             else:
                 print(self.grid.nodes[x, y].mode)
-                print(self.grid.nodes[x-1, y].mode)
+                print(f"x: {x}, y: {y}")
         elif pressed3:
             self.grid.place_walkable(x, y)
         elif pressed2:

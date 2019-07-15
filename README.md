@@ -5,10 +5,12 @@ Pathfinding is a collection of pathfinding algorithms implemented in python 3
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
-
+clone the reopo, install packages and run testfile
 ```bash
-pip install foobar
+git clone https://github.com/LeoHeller/Pathfinding
+cd Pathfinding
+pip install -r requirements.txt
+python3.6 AlgoTest.py
 ```
 
 
@@ -32,6 +34,9 @@ The depth-first search algorithm of maze generation is frequently implemented us
 ## Algorithms
 
 ### A* (A-star)
+
+![](maze-a-star.gif)
+
 1.Initialize the open list
 
 2.Initialize the closed list
@@ -125,15 +130,6 @@ function A_Star(start, goal, h)
 
 ```
 
-## Usage
-
-```python
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
-```
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
