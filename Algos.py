@@ -1,11 +1,12 @@
 import pygame
-from pygame.locals import DOUBLEBUF
+from pygame.locals import DOUBLEBUF, FULLSCREEN
 import numpy as np
 from enum import Enum
 from typing import List, Optional
 import time
 import heapq
 import random
+from math import ceil, floor
 from timeit import default_timer as timer
 from mazelib import Maze as _Maze
 from mazelib.generate.Prims import Prims
@@ -35,23 +36,27 @@ class Node:
 
 
 class Grid:
-    def __init__(self, width, height, node_size, node_type: Node, generate_maze=True):
-        self.width = width
-        self.height = height
+    def __init__(self, maze_width, maze_height, node_size, node_type: Node, generate_maze=True):
+
+        self.height = maze_height * node_size
+        self.width = maze_width * node_size
         self.node_size = node_size
         self.node_type = node_type
-
         self.generate_maze = generate_maze
 
         self.start_node_pos = (0, 0)
         self.end_node_pos = (0, 0)
 
-        self.nodes: Optional[node_type] = np.empty([int(width / self.node_size), int(height / self.node_size)],
-                                                   dtype=node_type)
-
         # pygame stuff
         pygame.init()
-        self.window = pygame.display.set_mode((height, width), DOUBLEBUF)
+        pygame.display.set_caption('aMAZEing')
+        self.window = pygame.display.set_mode((self.width, self.height), DOUBLEBUF)
+
+        self.nodes: Optional[node_type] = np.empty(
+            [maze_width, maze_height],
+            dtype=node_type)
+        print(self.nodes.shape)
+
         self.window.set_alpha(None)
         pygame.display.flip()
         self.draw_grid()
@@ -59,11 +64,11 @@ class Grid:
 
     def draw_grid(self):
         # draw the squares
-        for x in range(int(self.width / self.node_size)):
-            for y in range(int(self.width / self.node_size)):
-                self.draw_sq(x, y)
-                self.nodes[x, y] = self.node_type(x, y)
-
+        for x in range(self.nodes.shape[1]):
+            for y in range(self.nodes.shape[0]):
+                self.draw_sq(y, x)
+                self.nodes[y, x] = self.node_type(y, x)
+        pygame.display.flip()
         # reset the start position
         self.start_node_pos = (0, 0)
         if self.generate_maze:
@@ -106,22 +111,20 @@ class Maze:
         self.start = start
         self.grid = grid
 
-        self.maze = self.generate(10, 10)
+        visible_space = self.grid.nodes.shape
 
-        w, h = pygame.display.get_surface().get_size()
+        self.maze = self.generate(visible_space[0] / 2, visible_space[1] / 2)
 
-        visible_space = w // self.grid.node_size, h // self.grid.node_size
-
-        for x in range(int(self.grid.width / self.grid.node_size)):
-            for y in range(int(self.grid.height / self.grid.node_size)):
+        for x in range(visible_space[0]):
+            for y in range(visible_space[1]):
                 if not (0 <= x <= visible_space[0]) or not (0 <= y <= visible_space[1]):
                     self.grid.place_obstacle(x, y)
                     continue
                 if self.maze.grid[x, y] == 1:
                     self.grid.place_obstacle(x, y)
 
-        grid.place_start(*self.maze.start)
-        grid.place_end(*self.maze.end)
+        grid.place_start(self.maze.start[0], self.maze.start[1])
+        grid.place_end(self.maze.end[0], self.maze.end[1])
 
     @staticmethod
     def generate(width, height):
@@ -130,6 +133,14 @@ class Maze:
         m.generate()
         m.generate_entrances(True, True)
         return m
+
+    @staticmethod
+    def showPNG(grid):
+        """Generate a simple image of the maze."""
+        plt.figure(figsize=(10, 5))
+        plt.imshow(grid, cmap=plt.cm.binary, interpolation='nearest')
+        plt.xticks([]), plt.yticks([])
+        plt.show()
 
 
 class AStarNode(Node):
@@ -165,15 +176,15 @@ class AStar:
         self.closed: List[AStarNode] = list()
         self.start: Optional[AStarNode] = self.grid.nodes[self.grid.start_node_pos]
         self.end: Optional[AStarNode] = self.grid.nodes[self.grid.end_node_pos]
-        self.open.append(self.start)
+        heapq.heappush(self.open, self.start)
 
     def get_path(self):
         path = None
         while path is None:
             path = self.next_step()
-            time.sleep(.005)
+            time.sleep(.5)
             pygame.display.flip()
-        return path
+        return path, len(path)
 
     @staticmethod
     def manhattan_distance(node1, node2):
@@ -188,20 +199,28 @@ class AStar:
     @staticmethod
     def neighbors_with_diagonal(node):
         x, y = node.x, node.y
-        yield x - 1, y - 1
-        yield x, y - 1
-        yield x + 1, y - 1
-        yield x - 1, y
+
+        if x - 1 >= 0:
+            yield x - 1, y
+            yield x - 1, y + 1
+        if y - 1 >= 0:
+            yield x, y - 1
+            yield x + 1, y - 1
+        if x - 1 >= 0 and y - 1 >= 0:
+            yield x - 1, y - 1
+
         yield x + 1, y
-        yield x - 1, y + 1
         yield x, y + 1
         yield x + 1, y + 1
 
     @staticmethod
     def cardinal_neighbors(node):
         x, y = node.x, node.y
-        yield x, y - 1
-        yield x - 1, y
+        if x - 1 >= 0:
+            yield x - 1, y
+        if y - 1 >= 0:
+            yield x, y - 1
+
         yield x + 1, y
         yield x, y + 1
 
@@ -235,8 +254,8 @@ class AStar:
         for neighbor in self.neighbors(current):
             try:
                 visible_space = self.grid.width // self.grid.node_size, self.grid.height // self.grid.node_size
-                if self.grid.nodes[neighbor] is not None and (
-                        (0 <= neighbor[0] <= visible_space[0]) and (0 <= neighbor[1] <= visible_space[1])):
+                if self.grid.nodes[neighbor] is not None:  # and (
+                    # (0 <= neighbor[0] <= visible_space[0]) and (0 <= neighbor[1] <= visible_space[1])):
                     children.append(self.grid.nodes[neighbor])
             except IndexError:
                 pass

@@ -3,7 +3,7 @@ from Algos import *
 
 class Viz:
     def __init__(self):
-        self.grid = Grid(525, 525, 25, AStarNode)
+        self.grid = Grid(39, 39, 25, node_type=AStarNode, generate_maze=True)
 
         pygame.display.flip()
         self.clock = pygame.time.Clock()
@@ -29,12 +29,13 @@ class Viz:
                     self.debug = not self.debug
                 elif event.key == ord(" "):
                     self.a_star = AStar(self.grid, AStar.manhattan_distance, AStar.cardinal_neighbors)
-                    path = self.a_star.get_path()
+                    path, distance = self.a_star.get_path()
                     if path is False:
                         print("i cant solve that!!")
                         return
                     for node in path:
                         self.grid.draw_sq(node.x, node.y, color=(19, 151, 158))
+                    print(f"took me {distance} steps")
 
     def handle_mouse(self):
         # mouse input
@@ -48,6 +49,7 @@ class Viz:
             else:
                 print(self.grid.nodes[x, y].mode)
                 print(f"x: {x}, y: {y}")
+                print(f"f-cost: {self.grid.nodes[x, y].f_cost}, g-cost: {self.grid.nodes[x, y].g_cost}, h-cost: {self.grid.nodes[x, y].h_cost}")
         elif pressed3:
             self.grid.place_walkable(x, y)
         elif pressed2:
