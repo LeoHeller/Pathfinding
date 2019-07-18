@@ -3,7 +3,12 @@ from Algos import *
 
 class Viz:
     def __init__(self):
-        self.grid = Grid(39, 39, 25, node_type=AStarNode, generate_maze=True)
+        # 191 103 10
+        # 999 999 2
+        self.mode = 0
+        self.modes = [[37, 21, 50], [191, 103, 10], [999, 501, 2]]
+
+        self.grid = Grid(*self.modes[self.mode], node_type=AStarNode, generate_maze=True, slow=False)
 
         pygame.display.flip()
         self.clock = pygame.time.Clock()
@@ -22,11 +27,19 @@ class Viz:
                 if event.key in [27, 113]:
                     self.running = False
                 elif event.key == ord("r"):
+                    # self.grid.reset()
                     self.grid.draw_grid()
                 elif event.key == ord("s"):
                     self.special_mode = not self.special_mode
                 elif event.key == ord("d"):
                     self.debug = not self.debug
+                elif event.key == ord("t"):
+                    self.grid.slow = not self.grid.slow
+                elif event.key == ord("m"):
+                    self.mode += 1
+                    self.mode = self.mode % len(self.modes)
+                    self.grid = Grid(*self.modes[self.mode]
+                                     , node_type=AStarNode, generate_maze=True, slow=False)
                 elif event.key == ord(" "):
                     self.a_star = AStar(self.grid, AStar.manhattan_distance, AStar.cardinal_neighbors)
                     path, distance = self.a_star.get_path()
@@ -49,7 +62,8 @@ class Viz:
             else:
                 print(self.grid.nodes[x, y].mode)
                 print(f"x: {x}, y: {y}")
-                print(f"f-cost: {self.grid.nodes[x, y].f_cost}, g-cost: {self.grid.nodes[x, y].g_cost}, h-cost: {self.grid.nodes[x, y].h_cost}")
+                print(f"f-cost: {self.grid.nodes[x, y].f_cost}, g-cost: {self.grid.nodes[x, y].g_cost},\
+                        h-cost: {self.grid.nodes[x, y].h_cost}")
         elif pressed3:
             self.grid.place_walkable(x, y)
         elif pressed2:
@@ -63,7 +77,8 @@ class Viz:
         self.handle_mouse()
 
         pygame.display.flip()
-        self.clock.tick(60)
+        if self.grid.slow:
+            self.clock.tick(60)
 
 
 Viz()

@@ -5,6 +5,7 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/AlgoTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/AlgoTest.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Algos.py" beforeDir="false" afterPath="$PROJECT_DIR$/Algos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/benchmark.txt" beforeDir="false" afterPath="$PROJECT_DIR$/benchmark.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -17,10 +18,13 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Algos.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="318">
-              <caret line="184" column="24" selection-start-line="184" selection-start-column="24" selection-end-line="184" selection-end-column="24" />
+            <state relative-caret-position="203">
+              <caret line="204" column="24" selection-start-line="204" selection-start-column="24" selection-end-line="204" selection-end-column="24" />
               <folding>
                 <element signature="e#0#13#0" expanded="true" />
+                <element signature="e#5890#5972#0" />
+                <element signature="e#6041#6122#0" />
+                <element signature="e#6808#6866#0" />
               </folding>
             </state>
           </provider>
@@ -29,8 +33,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/AlgoTest.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1071">
-              <caret line="51" column="141" selection-start-line="51" selection-start-column="141" selection-end-line="51" selection-end-column="141" />
+            <state relative-caret-position="168">
+              <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
             </state>
           </provider>
         </entry>
@@ -52,9 +56,18 @@
       <find>``</find>
       <find>.grid.</find>
       <find>print</find>
+      <find>sleep</find>
+      <find>sle</find>
+      <find>child</find>
+      <find>flip</find>
+      <find>200</find>
+      <find>draw_sq</find>
+      <find>slee</find>
+      <find>1000</find>
     </findStrings>
     <replaceStrings>
       <replace>.</replace>
+      <replace>neighbor</replace>
     </replaceStrings>
   </component>
   <component name="Git.Settings">
@@ -73,8 +86,8 @@
     </option>
   </component>
   <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="452" />
-    <option name="y" value="62" />
+    <option name="x" value="213" />
+    <option name="y" value="27" />
     <option name="width" value="1400" />
     <option name="height" value="1000" />
   </component>
@@ -202,13 +215,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="27" width="1920" height="1053" extended-state="6" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.124406956" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
-      <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.32822758" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32932165" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.32822758" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.42392567" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -292,29 +306,23 @@
     <entry file="file://$PROJECT_DIR$/benchmark.txt">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/Algos.py">
+    <entry file="file://$PROJECT_DIR$/AlgoTest.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="318">
-          <caret line="184" column="24" selection-start-line="184" selection-start-column="24" selection-end-line="184" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-            <element signature="e#1512#1871#0" />
-            <element signature="e#1886#2094#0" />
-            <element signature="e#2140#2227#0" />
-            <element signature="e#2273#2364#0" />
-            <element signature="e#2801#3140#0" />
-            <element signature="e#3159#4390#0" />
-            <element signature="e#5992#6073#0" />
-            <element signature="e#6140#6361#0" />
-            <element signature="e#6598#6656#0" />
-          </folding>
+        <state relative-caret-position="168">
+          <caret line="8" column="25" selection-start-line="8" selection-start-column="25" selection-end-line="8" selection-end-column="25" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/AlgoTest.py">
+    <entry file="file://$PROJECT_DIR$/Algos.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1071">
-          <caret line="51" column="141" selection-start-line="51" selection-start-column="141" selection-end-line="51" selection-end-column="141" />
+        <state relative-caret-position="203">
+          <caret line="204" column="24" selection-start-line="204" selection-start-column="24" selection-end-line="204" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+            <element signature="e#5890#5972#0" />
+            <element signature="e#6041#6122#0" />
+            <element signature="e#6808#6866#0" />
+          </folding>
         </state>
       </provider>
     </entry>
