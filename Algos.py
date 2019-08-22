@@ -1,17 +1,14 @@
-import pygame
-from pygame.locals import DOUBLEBUF, FULLSCREEN
-import numpy as np
+import heapq
+import time
 from enum import Enum
 from typing import List, Optional
-import time
-import heapq
-import random
-from math import ceil, floor
-from timeit import default_timer as timer
+
+import matplotlib.pyplot as plt
+import numpy as np
+import pygame
 from mazelib import Maze as _Maze
 from mazelib.generate.Prims import Prims
-import matplotlib.pyplot as plt
-import os
+
 
 class Modes(Enum):
     walkable = 1
@@ -21,11 +18,11 @@ class Modes(Enum):
 
 
 class Node:
-    def __init__(self, x, y):
+    def __init__(self, x, y, mode: Modes = Modes.walkable):
         self.x = x
         self.y = y
 
-        self.mode = Modes.walkable
+        self.mode = mode
 
         self.penalty = 1
 
@@ -38,8 +35,8 @@ class Node:
 class Grid:
     def __init__(self, maze_width, maze_height, node_size, node_type: Node, generate_maze=True, slow=False):
 
-        self.height = maze_height * node_size
-        self.width = maze_width * node_size
+        self.height = int(maze_height * node_size)
+        self.width = int(maze_width * node_size)
         self.node_size = node_size
         self.node_type = node_type
         self.generate_maze = generate_maze
@@ -50,11 +47,11 @@ class Grid:
         self.slow = slow
         # pygame stuff
 
-        os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
+        # os.environ['SDL_VIDEO_WINDOW_POS'] = "0,0"
 
         pygame.init()
         pygame.display.set_caption('aMAZEing')
-        self.window = pygame.display.set_mode((self.width, self.height), DOUBLEBUF)
+        self.window = pygame.display.set_mode((self.width, self.height))
 
         self.nodes: Optional[node_type] = np.empty(
             [maze_width, maze_height],
@@ -67,25 +64,15 @@ class Grid:
         pygame.display.flip()
 
     def reset(self):
-        # draw the squares
-        for x in range(self.nodes.shape[1]):
-            for y in range(self.nodes.shape[0]):
-                self.draw_sq(y, x)
-                self.nodes[y, x].type = Modes.walkable
+        self.nodes = [[self.node_type(x, y) for y in range(self.nodes.shape[0])] for x in range(self.nodes.shape[1])]
         if self.generate_maze:
             Maze(self)
 
     def draw_grid(self):
         # draw the squares
-        for x in range(self.nodes.shape[1]):
-            for y in range(self.nodes.shape[0]):
-                self.draw_sq(y, x)
-                self.nodes[y, x] = self.node_type(y, x)
-        pygame.display.flip()
+        self.nodes = [[self.node_type(x, y) for y in range(self.nodes.shape[0])] for x in range(self.nodes.shape[1])]
         # reset the start position
         self.start_node_pos = (0, 0)
-        if self.generate_maze:
-            Maze(self)
 
     def draw_sq(self, x, y, color=(255, 255, 255), spacing=0):
         rect = pygame.Rect(x * self.node_size + spacing, y * self.node_size + spacing, self.node_size - spacing,
@@ -125,8 +112,8 @@ class Maze:
         self.grid = grid
 
         visible_space = self.grid.nodes.shape
-
-        self.maze = self.generate(visible_space[0] / 2, visible_space[1] / 2)
+        print(visible_space)
+        self.maze = self.generate(visible_space[0] // 2, visible_space[1] // 2)
 
         for x in range(visible_space[0]):
             for y in range(visible_space[1]):
@@ -157,8 +144,8 @@ class Maze:
 
 
 class AStarNode(Node):
-    def __init__(self, x, y):
-        super().__init__(x, y)
+    def __init__(self, x, y, mode: Modes = Modes.walkable):
+        super().__init__(x, y, mode)
         self.g_cost = 0
         self.h_cost = 0
         self.f_cost = float("inf")

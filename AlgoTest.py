@@ -7,7 +7,7 @@ class Viz:
         # 999 999 2
         self.mode = 0
         self.modes = [[37, 21, 50], [191, 103, 10], [999, 501, 2]]
-
+        self.modes = [[11, 11, 10]]
         self.grid = Grid(*self.modes[self.mode], node_type=AStarNode, generate_maze=True, slow=False)
 
         pygame.display.flip()

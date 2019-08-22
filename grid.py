@@ -1,119 +1,301 @@
-import pygame, time, sys
-from pygame.locals import *
+import threading
+
 import numpy as np
-from itertools import product, starmap, islice
+from mazelib import Maze as _Maze
+from mazelib.generate.Prims import Prims
+import matplotlib.pyplot as plt
+from Algos import Modes, Node
+from typing import List, Optional
+import heapq, time, queue, _queue
+from multiprocessing import Pool
 
 
-class GameOfLife():
-    def __init__(self, blocksize, max_gen, width=480, height=680):
-        pygame.init()
-        self.blocksize = blocksize
+class Grid:
+    def __init__(self, maze_width, maze_height, node_type: type(Node), slow=False):
+        self.node_type = node_type
 
-        self.window = pygame.display.set_mode((height, width), DOUBLEBUF)
-        self.window.set_alpha(None)
+        self.start_node_pos = (0, 0)
+        self.end_node_pos = (0, 0)
 
-        pygame.display.flip()
-        self.w, self.h = pygame.display.get_surface().get_size()
-        self.field = np.array(
-            [[0 for j in range(int(self.w / self.blocksize))] for i in range(int(self.h / self.blocksize))])
-        #self.next_field = np.array(
-        #    [[0 for j in range(int(self.w / self.blocksize))] for i in range(int(self.h / self.blocksize))])
+        self.set_color = None
 
-        self.board = set([])
+        self.slow = slow
 
-        self.draw_grid()
-        pygame.display.flip()
+        self.nodes: node_type = np.array(
+            [[self.node_type(x, y) for y in range(maze_height)] for x in range(maze_width)],
+            dtype=node_type
+        )
 
-    def draw_sq(self, x, y, color=(255, 255, 255), spacing=2):
-        rect = pygame.Rect(x * self.blocksize, y * self.blocksize, self.blocksize - spacing, self.blocksize - spacing)
-        pygame.draw.rect(self.window, color, rect)
-
-    def draw_grid(self):
-        for y in range(int(self.w / self.blocksize)+1):
-            for x in range(int(self.h / self.blocksize)+1):
+    def reset(self):
+        # draw the squares
+        for x in range(self.nodes.shape[1]):
+            for y in range(self.nodes.shape[0]):
                 self.draw_sq(y, x)
+                self.nodes[y, x].type = Modes.walkable
+
+    def draw_sq(self, x, y, color=(255, 255, 255), spacing=0):
+        self.set_color(x, y, color)
+
+    def place_obstacle(self, x, y):
+        self.draw_sq(x, y, color=(35, 0, 55))
+        self.nodes[x, y].set_mode(Modes.obstacle)
+
+    def place_walkable(self, x, y):
+        self.draw_sq(x, y, color=(255, 255, 255))
+        self.nodes[x, y].set_mode(Modes.walkable)
+
+    def place_start(self, x, y):
+        if self.nodes[self.start_node_pos].mode == Modes.start:
+            self.nodes[self.start_node_pos].set_mode(Modes.walkable)
+            self.draw_sq(self.start_node_pos[0], self.start_node_pos[1], color=(255, 255, 255))
+
+        self.start_node_pos = (x, y)
+        self.draw_sq(x, y, color=(65, 245, 70))
+        self.nodes[x, y].set_mode(Modes.start)
+
+    def place_end(self, x, y):
+        if self.nodes[self.end_node_pos].mode == Modes.end:
+            self.nodes[self.end_node_pos].set_mode(Modes.walkable)
+            self.draw_sq(self.end_node_pos[0], self.end_node_pos[1], color=(255, 255, 255))
+
+        self.end_node_pos = (x, y)
+        self.draw_sq(x, y, color=(14, 14, 153))
+        self.nodes[x, y].set_mode(Modes.end)
+
+    def apply_maze(self, maze):
+        pass
+
+    def set_front_end(self, front):
+        self.front = front
+
+
+class Maze:
+    def __init__(self, grid_shape, start=(0, 0)):
+        self.start = start
+        visible_space = grid_shape
+        self.maze = self.generate(visible_space[0] // 2, visible_space[1] // 2)
 
     @staticmethod
-    def neighbors(cell):
-        x, y = cell
-        yield x - 1, y - 1
-        yield x, y - 1
-        yield x + 1, y - 1
-        yield x - 1, y
-        yield x + 1, y
-        yield x - 1, y + 1
-        yield x, y + 1
-        yield x + 1, y + 1
+    def generate(width, height):
+        m = _Maze()
+        m.generator = Prims(width, height)
+        m.generate()
+        m.generate_entrances(True, True)
+        return m
 
-    def apply_iteration(self, board):
-        new_board = set([])
-        candidates = self.board.union(set(n for cell in self.board for n in self.neighbors(cell)))
-        for cell in candidates:
-            count = sum((n in self.board) for n in self.neighbors(cell))
-            if count == 3 or (count == 2 and cell in self.board):
-                new_board.add(cell)
-        return new_board
-
-    def update(self):
-        for x, y in self.board:
-            game.draw_sq(x, y, color=(255, 255, 255))
-        self.board = self.apply_iteration(self.board)
-
-        for x, y in self.board:
-            game.draw_sq(x, y, color=(255, 0, 0))
-
-    def limit(self, value, minV, maxV):
-        if value < minV:
-            value = minV
-        elif value > maxV:
-            value = maxV
-        return value
+    @staticmethod
+    def showPNG(grid):
+        """Generate a simple image of the maze."""
+        plt.figure(figsize=(10, 5))
+        plt.imshow(grid, cmap=plt.cm.binary, interpolation='nearest')
+        plt.xticks([]), plt.yticks([])
+        plt.show()
 
 
-running = True
-paused = True
-tickrate = 1
-game = GameOfLife(25, 500)
-clock = pygame.time.Clock()
+class AStarNode(Node):
+    def __init__(self, x, y, mode: Modes = Modes.walkable):
+        super().__init__(x, y, mode)
+        self.g_cost = 0
+        self.h_cost = 0
+        self.f_cost = float("inf")
 
-while running:
+        self.in_closed = False
+        self.in_open = False
 
-    events = pygame.event.get()
-    for event in events:
-        if event.type == pygame.KEYDOWN:
-            if event.key == 32:
-                paused = not paused
-            elif event.key == 273:
-                tickrate += 10
-            elif event.key == 274:
-                tickrate -= 10
-            elif event.key in [27, 113]:
-                running = False
+        self.parent: Optional[AStarNode] = None
 
-    tickrate = game.limit(tickrate, 1, 120)
-    if paused:
-        pos = pygame.mouse.get_pos()
-        pressed1, pressed2, pressed3 = pygame.mouse.get_pressed()
-        if pressed1:
-            x, y = int(pos[0] / game.blocksize), int(pos[1] / game.blocksize)
-            game.draw_sq(x, y, color=(255, 0, 0))
-            game.board.add((x, y))
-        elif pressed3:
-            x, y = int(pos[0] / game.blocksize), int(pos[1] / game.blocksize)
-            game.draw_sq(x, y, color=(255, 255, 255))
+    def __lt__(self, other):  # self < other
+        if self.f_cost == other.f_cost:
+            return self.h_cost > other.h_cost
+        return self.f_cost < other.f_cost
+
+    def __gt__(self, other):  # self > other
+        if self.f_cost == other.f_cost:
+            return self.h_cost < other.h_cost
+        return self.f_cost > other.f_cost
+
+    def __eq__(self, other):  # self == other
+        return self.x == other.x and self.y == other.y
+
+
+class AStar:
+    def __init__(self, nodes, start_node_pos, end_node_pos, color_setter, h=None, neighbors=None):
+        self.h = self.manhattan_distance if h is None else h
+        self.neighbors = AStar.cardinal_neighbors if neighbors is None else neighbors
+        self.draw_sq = color_setter
+
+        self.nodes: List[AStarNode] = nodes
+        self.open: List[AStarNode] = list()
+        self.closed: List[AStarNode] = list()
+
+        self.start_node_pos = start_node_pos
+        self.end_node_pos = end_node_pos
+        self.start: Optional[AStarNode] = self.nodes[tuple(self.start_node_pos)]
+        self.end: Optional[AStarNode] = self.nodes[tuple(self.end_node_pos)]
+
+        self.slow = True
+
+        self.should_be_looking = True
+        self.path = False
+
+        self.open = queue.PriorityQueue()
+        self.start.in_open = True
+        self.open.put(self.start)
+
+        # heapq.heappush(self.open, self.start)
+
+    @staticmethod
+    def manhattan_distance(node1, node2):
+        distance = abs(node1.x - node2.x) + abs(node1.y - node2.y)
+        return distance
+
+    @staticmethod
+    def diagonal_distance(node1, node2):
+        # c2 = a2 + b2
+        return (node2.x - node1.x) ** 2 + (node2.y - node1.y) ** 2
+
+    @staticmethod
+    def neighbors_with_diagonal(nodes, node):
+        try:
+            x, y = node.x, node.y
+            if x - 1 >= 0:
+                yield nodes[x - 1, y]
+                yield nodes[x - 1, y + 1]
+            if y - 1 >= 0:
+                yield nodes[x, y - 1]
+                yield nodes[x + 1, y - 1]
+            if x - 1 >= 0 and y - 1 >= 0:
+                yield nodes[x - 1, y - 1]
+
+            yield nodes[x + 1, y]
+            yield nodes[x, y + 1]
+            yield nodes[x + 1, y + 1]
+        except IndexError:
+            pass
+
+    @staticmethod
+    def cardinal_neighbors(nodes, node):
+        try:
+            x, y = node.x, node.y
+            if x - 1 >= 0:
+                yield nodes[x - 1, y]
+            if y - 1 >= 0:
+                yield nodes[x, y - 1]
+
+            yield nodes[x + 1, y]
+            yield nodes[x, y + 1]
+        except IndexError:
+            pass
+
+    def next_step(self):
+        try:
+            # current = heapq.heappop(self.open)
+            current = self.open.get(block=True, timeout=4)
+            # raise IndexError
+        except (IndexError, _queue.Empty):
+            print("No path found")
+            return False
+        if current.mode == Modes.obstacle:
+            return
+
+        current.in_closed = True
+
+        # mark as closed (purple)
+        self.draw_sq(current.x, current.y, color=(176, 16, 21))
+
+        if current == self.end or (current.x, current.y) == self.end_node_pos:
+            # backtrack to start
+            path = list()
+            while current is not None:
+                path.append(current)
+                current = current.parent
+            return path[::-1]  # Return reversed path
+
+        for neighbor in self.neighbors(self.nodes, current):
+            if neighbor.in_closed or neighbor.mode == Modes.obstacle:
+                continue
+
+            new_path_cost = current.g_cost + 1
+            if (new_path_cost < neighbor.g_cost) or not neighbor.in_open:
+                # calculate g, h, f costs
+                neighbor.g_cost = current.g_cost + 1
+                neighbor.h_cost = self.h(neighbor, self.end)
+                neighbor.f_cost = neighbor.g_cost + neighbor.h_cost
+                neighbor.parent = current
+
+                if not neighbor.in_open:
+                    # mark as open
+                    self.draw_sq(neighbor.x, neighbor.y, color=(158, 19, 156))
+                    # heapq.heappush(self.open, neighbor)
+                    self.open.put(neighbor)
+                    neighbor.in_open = True
+
+    def solve(self, num_workers):
+        workers = []
+        for n in range(num_workers):
+            workers.append(Worker(self))
+            workers[n].start()
+
+
+class Worker(threading.Thread):
+    def __init__(self, master):
+        super().__init__()
+        self.daemon = True
+
+        self.master = master
+
+    def run(self):
+        while self.master.should_be_looking:
             try:
-                game.board.remove((x, y))
-            except Exception:
-                pass
+                if not self.master.open.empty():
+                    # current = heapq.heappop(self.master.open)
+                    current = self.master.open.get(block=True, timeout=5)
+                else:
+                    continue
 
-    if not paused:
-        game.update()
-        pygame.display.flip()
-        clock.tick(tickrate)
+            except (IndexError, _queue.Empty):
+                print("No path found")
+                self.master.should_be_looking = False
+                continue
 
-    else:
-        pygame.display.flip()
-        clock.tick(60)
+            if current.mode == Modes.obstacle or isinstance(current, type(None)):
+                continue
 
-print("done")
-pygame.quit()
+            current.in_closed = True
+
+            # mark as closed (purple)
+            self.master.draw_sq(current.x, current.y, color=(176, 16, 21))
+
+            if current == self.master.end or (current.x, current.y) == self.master.end_node_pos:
+                # backtrack to start
+                path = list()
+                while current is not None:
+                    path.append(current)
+                    current = current.parent
+                self.master.path = path[::-1]  # Return reversed path
+                self.master.should_be_looking = False
+                continue
+
+            if isinstance(current, type(None)):
+                continue
+
+            neighbors = list(self.master.neighbors(self.master.nodes, current))
+            for neighbor in neighbors:
+                if neighbor.in_closed or neighbor.mode == Modes.obstacle:
+                    continue
+
+                new_path_cost = current.g_cost + 1
+                if (new_path_cost < neighbor.g_cost) or not neighbor.in_open:
+                    # calculate g, h, f costs
+                    neighbor.g_cost = current.g_cost + 1
+                    neighbor.h_cost = self.master.h(neighbor, self.master.end)
+                    neighbor.f_cost = neighbor.g_cost + neighbor.h_cost
+                    neighbor.parent = current
+
+                    if not neighbor.in_open:
+                        # mark as open
+                        self.master.draw_sq(neighbor.x, neighbor.y, color=(158, 19, 156))
+                        if self.master.should_be_looking:
+                            self.master.open.put(neighbor)
+                            neighbor.in_open = True
+                            # heapq.heappush(self.master.open, neighbor)
