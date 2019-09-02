@@ -1,4 +1,4 @@
-from Algos import *
+from original_pygame.Algos import *
 
 
 class Viz:

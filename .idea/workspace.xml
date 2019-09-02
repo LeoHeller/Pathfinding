@@ -2,20 +2,65 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="b524f6cb-9fff-4ca5-abf8-25bb811d6766" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/leo.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/Pathfinding.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/Pathfinding.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MazeGeneration/maze_gen.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/MazeGeneration/setch.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/AlgoTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/AlgoTest.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Algos.py" beforeDir="false" afterPath="$PROJECT_DIR$/Algos.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/grid.py" beforeDir="false" afterPath="$PROJECT_DIR$/grid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/AlgoTest.py" beforeDir="false" afterPath="$PROJECT_DIR$/original_pygame/AlgoTest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Algos.py" beforeDir="false" afterPath="$PROJECT_DIR$/original_pygame/Algos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/grid.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_kivy/grid.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/kivytest.py" beforeDir="false" afterPath="$PROJECT_DIR$/new_kivy/kivytest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/new_kivy/kivytest.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="312">
+              <caret line="301" column="76" selection-start-line="301" selection-start-column="55" selection-end-line="301" selection-end-column="76" />
+              <folding>
+                <element signature="e#0#23#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MazeGeneration/maze_gen.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1464">
+              <caret line="65" column="42" selection-start-line="65" selection-start-column="38" selection-end-line="65" selection-end-column="42" />
+              <folding>
+                <element signature="e#24#49#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/MazeGeneration/maze60x40.png">
+          <provider selected="true" editor-type-id="images" />
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/new_kivy/grid.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="840">
+              <caret line="43" selection-start-line="43" selection-end-line="43" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
   </component>
   <component name="FileTemplateManagerImpl">
     <option name="RECENT_TEMPLATES">
@@ -27,14 +72,64 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/kivytest.py" />
+        <option value="$PROJECT_DIR$/MazeGeneration/setch.py" />
+        <option value="$PROJECT_DIR$/MazeGeneration/test.py" />
+        <option value="$PROJECT_DIR$/MazeGeneration/maze-gen.py" />
+        <option value="$PROJECT_DIR$/MazeGeneration/maze_gen.py" />
+        <option value="$PROJECT_DIR$/new_kivy/grid.py" />
+        <option value="$PROJECT_DIR$/new_kivy/kivytest.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="247" />
+    <option name="y" value="-8" />
+    <option name="width" value="1400" />
+    <option name="height" value="1000" />
+  </component>
   <component name="ProjectId" id="1OvDWIeO9FN5zx4IIhcE0jIthaT" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectView">
+    <navigator proportions="" version="1">
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="Pathfinding" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Pathfinding" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="Pathfinding" type="b2602c69:ProjectViewProjectNode" />
+              <item name="Pathfinding" type="462c0819:PsiDirectoryNode" />
+              <item name="MazeGeneration" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+    </panes>
+  </component>
   <component name="PropertiesComponent">
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="restartRequiresConfirmation" value="false" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="I:\Code\Python\Pathfinding\kivy" />
+      <recent name="I:\Code\Python\Pathfinding\original_pygame" />
+      <recent name="I:\Code\Python\Pathfinding" />
+    </key>
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">
@@ -48,8 +143,8 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.kivytest">
-    <configuration name="ThreadTest" type="PythonConfigurationType" factoryName="Python" temporary="true">
+  <component name="RunManager" selected="Python.kivytest (1)">
+    <configuration name="kivytest (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Pathfinding" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -57,32 +152,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/new_kivy" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/ThreadTest.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="grid" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="Pathfinding" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/grid.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/new_kivy/kivytest.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -103,7 +177,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/kivytest.py" />
+      <option name="SCRIPT_NAME" value="I:\Code\Python\Pathfinding\kivy\kivytest.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -133,7 +207,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="mapmaker" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="maze-gen" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="Pathfinding" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -141,11 +215,32 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MazeGeneration" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/mapmaker.py" />
+      <option name="SCRIPT_NAME" value="I:\Code\Python\Pathfinding\MazeGeneration\maze_gen.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="Pathfinding" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/MazeGeneration" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/MazeGeneration/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -155,19 +250,19 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.grid" />
+      <item itemvalue="Python.kivytest (1)" />
       <item itemvalue="Python.kivytest" />
-      <item itemvalue="Python.ThreadTest" />
-      <item itemvalue="Python.mapmaker" />
       <item itemvalue="Python.mapEditorV2" />
+      <item itemvalue="Python.maze-gen" />
+      <item itemvalue="Python.test" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.kivytest (1)" />
         <item itemvalue="Python.kivytest" />
+        <item itemvalue="Python.test" />
+        <item itemvalue="Python.maze-gen" />
         <item itemvalue="Python.mapEditorV2" />
-        <item itemvalue="Python.mapmaker" />
-        <item itemvalue="Python.ThreadTest" />
-        <item itemvalue="Python.grid" />
       </list>
     </recent_temporary>
   </component>
@@ -184,14 +279,57 @@
     </task>
     <servers />
   </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1096" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.24973656" />
+      <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
+      <window_info id="Favorites" order="2" side_tool="true" />
+      <window_info anchor="bottom" id="Message" order="0" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.32977587" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.32977587" />
+      <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
+      <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
+      <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
+      <window_info anchor="bottom" id="TODO" order="6" />
+      <window_info anchor="bottom" id="Version Control" order="7" />
+      <window_info anchor="bottom" id="Terminal" order="8" sideWeight="0.49947312" weight="0.32977587" />
+      <window_info anchor="bottom" id="Event Log" order="9" sideWeight="0.50052685" side_tool="true" weight="0.32977587" />
+      <window_info anchor="bottom" id="Python Console" order="10" weight="0.32977587" />
+      <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
+      <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
+      <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
+    </layout>
+  </component>
   <component name="Vcs.Log.Tabs.Properties">
     <option name="TAB_STATES">
       <map>
         <entry key="MAIN">
           <value>
             <State>
+              <option name="RECENTLY_FILTERED_USER_GROUPS">
+                <collection />
+              </option>
+              <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+                <collection />
+              </option>
               <option name="COLUMN_ORDER" />
             </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+    <option name="RECENT_FILTERS">
+      <map>
+        <entry key="Branch">
+          <value>
+            <list />
+          </value>
+        </entry>
+        <entry key="User">
+          <value>
+            <list />
           </value>
         </entry>
       </map>
@@ -212,5 +350,84 @@
         </breakpoint>
       </default-breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/original_pygame/AlgoTest.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/requirements.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/original_pygame/Algos.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MazeGeneration/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="207">
+          <caret line="103" lean-forward="true" selection-end-line="113" />
+          <folding>
+            <element signature="e#0#26#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MazeGeneration/setch.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-777">
+          <caret line="10" selection-start-line="10" selection-end-line="10" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new_kivy/kivytest.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="312">
+          <caret line="301" column="76" selection-start-line="301" selection-start-column="55" selection-end-line="301" selection-end-column="76" />
+          <folding>
+            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#1807#1894#0" />
+            <element signature="e#1933#2415#0" />
+            <element signature="e#2493#3536#0" />
+            <element signature="e#3613#4263#0" />
+            <element signature="e#4090#5441#0" />
+            <element signature="e#5489#5560#0" />
+            <element signature="e#5624#5804#0" />
+            <element signature="e#5843#5967#0" />
+            <element signature="e#6024#6561#0" />
+            <element signature="e#6595#7040#0" />
+            <element signature="e#7085#8796#0" />
+            <element signature="e#8849#9578#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MazeGeneration/maze_gen.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1464">
+          <caret line="65" column="42" selection-start-line="65" selection-start-column="38" selection-end-line="65" selection-end-column="42" />
+          <folding>
+            <element signature="e#24#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/MazeGeneration/maze60x40.png">
+      <provider selected="true" editor-type-id="images" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/new_kivy/grid.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
   </component>
 </project>

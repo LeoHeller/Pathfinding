@@ -1,6 +1,8 @@
 from array import array
 from itertools import chain
 
+import time
+
 from kivy.app import App
 from kivy.clock import Clock
 from kivy.core.window import Window
@@ -9,16 +11,20 @@ from kivy.graphics.texture import Texture
 from kivy.properties import NumericProperty, ListProperty
 from kivy.uix.widget import Widget
 
-from grid import *
+from new_kivy.grid import *
 
-# from kivy.config import Config
+from MazeGeneration import maze_gen
+
+# from new_kivy.config import Config
 # Config.read("myConfig.ini")
-# Config.set('kivy', 'log_level', 'warning')
-# Config.set('kivy', 'maxfps', '30')
+# Config.set('new_kivy', 'log_level', 'warning')
+# Config.set('new_kivy', 'maxfps', '30')
 # Config.write()
 
 
-SHAPE = (399, 399)
+SHAPE = (99, 99)
+SHAPE = tuple([x if x // 2 != 0 else x + 1 for x in SHAPE])
+maze_gen.DIM = [int((x + 1) / 2) for x in SHAPE]
 
 
 class Dedale(Widget):
@@ -34,7 +40,7 @@ class Dedale(Widget):
         self.maze = None
 
         self.solver = SolverThread(self)
-        self._mazeGenerationThread = MazeGenerationThread(self, max_look_ahead=10)
+        self._mazeGenerationThread = SaltMazeGenerationThread(self, max_look_ahead=10)
         self._mazeGenerationThread.start()
 
         # self.bottom_left = self.maze.shape
@@ -83,8 +89,8 @@ class Dedale(Widget):
             )
 
     def _update_texture(self, *dt):
-        if dt:
-            print(f"\r{1 / dt[0]:.2f}", end="")
+        # if dt:
+        #    print(f"\r{1 / dt[0]:.2f}", end="")
 
         # data = [[(
         #     int(255 * ((col * row) / (self.cols * self.rows))), int(255 * ((col * row) / (self.cols * self.rows))),
@@ -113,10 +119,14 @@ class Dedale(Widget):
         # print(f"keycode: '{keycode}', text: '{text}', modifiers: '{modifiers}'")
         if keycode[0] == 32:
             if not self.solver.started:
-                print("solving")
-                self.solver.start()
+                try:
+                    self.solver.start()
+                    print("solving")
+                except RuntimeError:
+                    print("already solved this maze! generate a new maze with 'r'.")
             else:
                 self.solver.should_skip = not self.solver.should_skip
+                self.solver.join()
         elif keycode[0] == ord("r"):
             if not self.solver.started:
                 self.get_next_maze()
@@ -269,6 +279,33 @@ class MazeGenerationThread(threading.Thread):
             new_grid.end_node_pos = (new_maze.end[0], new_maze.end[1])
 
             new_maze = np.array(new_maze.grid, dtype=bool)
+
+            self.maze_q.put(
+                (
+                    new_grid,
+                    new_maze
+                ),
+                block=True
+            )
+            print(f"now caching {self.maze_q.qsize()}")
+
+
+class SaltMazeGenerationThread(threading.Thread):
+    def __init__(self, parent, max_look_ahead=4):
+        super().__init__(daemon=True)
+        self.parent = parent
+        self.maze_q = queue.Queue(maxsize=max_look_ahead)
+
+    def run(self):
+        while True:
+            new_grid = Grid(SHAPE[0] + 2, SHAPE[1] + 2, AStarNode)
+            new_maze = maze_gen.maze_to_array(maze_gen.gen_maze_longer_paths(), invert=True)
+            new_maze = np.array(new_maze, dtype=bool)
+
+            print(new_maze.shape)
+
+            new_grid.start_node_pos = (1, 0)
+            new_grid.end_node_pos = (SHAPE[0], SHAPE[1] + 1)
 
             self.maze_q.put(
                 (

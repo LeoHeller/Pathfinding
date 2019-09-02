@@ -4,10 +4,9 @@ import numpy as np
 from mazelib import Maze as _Maze
 from mazelib.generate.Prims import Prims
 import matplotlib.pyplot as plt
-from Algos import Modes, Node
+from original_pygame.Algos import Modes, Node
 from typing import List, Optional
-import heapq, time, queue, _queue
-from multiprocessing import Pool
+import queue, _queue
 
 
 class Grid:
@@ -37,12 +36,18 @@ class Grid:
         self.set_color(x, y, color)
 
     def place_obstacle(self, x, y):
-        self.draw_sq(x, y, color=(35, 0, 55))
-        self.nodes[x, y].set_mode(Modes.obstacle)
+        try:
+            self.draw_sq(x, y, color=(35, 0, 55))
+            self.nodes[x, y].set_mode(Modes.obstacle)
+        except Exception:
+            pass
 
     def place_walkable(self, x, y):
-        self.draw_sq(x, y, color=(255, 255, 255))
-        self.nodes[x, y].set_mode(Modes.walkable)
+        try:
+            self.draw_sq(x, y, color=(255, 255, 255))
+            self.nodes[x, y].set_mode(Modes.walkable)
+        except Exception:
+            pass
 
     def place_start(self, x, y):
         if self.nodes[self.start_node_pos].mode == Modes.start:

@@ -1,3 +1,4 @@
+kivy
 cycler==0.10.0
 Cython==0.29.11
 kiwisolver==1.1.0
